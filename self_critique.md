@@ -356,6 +356,110 @@ proposal?
 3. De la Hamette's diagonal Rényi invariants as a QRF-fix for (b2): still
    untried.
 
+## Round 4 (2026-10-10) — first computational round, triggered by a new /goal
+
+The user set a new goal after the repo was first published: operationalize
+condition (c), build an actual computable toy model, and test the proposed
+fix for the QRF/observer-dependence problem (condition b2). This is the
+first round where the project computed anything rather than argued from
+literature and logic.
+
+**Connections found:**
+- Erker et al.'s autonomous-clock paper (cited since round 1 for a different
+  reason — the A-vs-accuracy tradeoff) turned out to be the literal physical
+  mechanism needed to fix the round-3 structural gap: their clocks use a
+  semi-infinite tape of fresh ancillas specifically because a single fixed
+  readout system saturates. I didn't need a new citation search to find the
+  fix — I needed to re-read a citation already in the document with the new
+  problem in mind. Second time this exact pattern has shown up (round 3 made
+  the same observation about this same paper, in the abstract/theoretical
+  register; round 4 is what happens when you actually build the thing the
+  theory predicted and watch it saturate in real numbers).
+- This connects to "collision models" (Ciccarello, Lorenzo, Giovannetti &
+  Palma, Phys. Rep. 2022, arXiv:2106.11974 — verified by search this round),
+  a named, standard architecture in quantum thermodynamics for exactly the
+  "periodically-refreshed ancilla" mechanism the toy model needed. Grounding
+  an ad hoc numerical trick (reset R every Δτ) in an established modeling
+  framework, rather than presenting it as a one-off hack, is the difference
+  between a defensible result and an arbitrary one.
+- De la Hamette's actual theorem (fetched via WebFetch this round, not
+  re-used from round 2's paraphrase) is stated at a pure group-theory level
+  with NO worked example in the paper itself — meaning the toy model built
+  this round to test it is a genuinely original numerical illustration, not
+  a duplication of anything published, regardless of whether the test
+  succeeded.
+
+**Mistakes caught / near-misses:**
+1. **A hypothesis was wrong, and the first instinct to force a story around
+   it was resisted.** Before running `toy_model_detector_recorder.py` I
+   expected (and wrote into the code's docstring as a comment) that a static
+   recorder, slowly coupled, would show a long plateau of sustained nonzero
+   A and R due to timescale separation. The actual numbers showed a peak
+   followed by *continuous decay toward zero*, not a plateau — the
+   hypothesis was simply wrong. Correct response (taken): report what the
+   code actually produced, not what was expected, and use the surprise to
+   motivate the next experiment (the tape fix) rather than silently
+   adjusting the narrative to make the first guess look right.
+2. **The QRF toy model's first construction gave a result and it would have
+   been easy to over-report it.** The restricted 2-sector family gave a
+   clean "frames agree" result — which, if reported alone, would have
+   looked like a success for the de la Hamette fix. Catching that this
+   family has an accidental exchange symmetry unrelated to the cited
+   theorem (and re-testing on a generic 4-sector family, where it then
+   *failed* to match) is exactly the kind of self-adversarial check that a
+   narrower, less careful pass would have skipped. **This is the single
+   most important process event of round 4**: a positive-looking result was
+   not accepted at face value before checking whether the test was actually
+   meaningful.
+3. When the generic-state QRF test then failed to match even after
+   dephasing, there were two bad options available and both were rejected:
+   (a) quietly tweak the construction until it matches (data-dredging a
+   positive result), or (b) report "the de la Hamette fix doesn't work" as
+   if the toy model's own validity were established (a false negative
+   presented as a strong claim). Instead: reported as inconclusive, with
+   the specific, falsifiable reason given (Rényi entropy is already
+   permutation-invariant on a diagonal matrix, so a mismatch in the
+   diagonal multiset itself can't be explained by the theorem's "exists a
+   permutation" clause — meaning either the construction isn't an "ideal
+   frame" in the paper's technical sense, or something else is missing).
+   This keeps the door open for a future, better-constructed test instead
+   of closing it with an unearned verdict in either direction.
+4. Condition (c)'s "commutes with the modular generator" sub-clause was
+   written into `framework.md` v2.2 as if it would obviously matter. The
+   toy model showed it did *not* visibly matter at the coupling strength
+   tested (both commuting and non-commuting couplings preserved the clock's
+   KMS-ness equally well). Rather than drop the clause or claim it was
+   wrong, it's now explicitly flagged as untested-at-these-parameters,
+   because the honest situation is "we don't yet know the threshold," not
+   "the clause is false."
+
+**Corrections applied (all in `framework.md` v3, `toy_model.md` new):**
+- Condition (c) rewritten to foreground the now-numerically-confirmed
+  "renewable apparatus / tape" requirement, with the modular-generator
+  commutation clause demoted to an explicitly open, untested refinement.
+- Condition (b2) updated to report the QRF test as inconclusive, with the
+  specific technical reason the test doesn't resolve the question, rather
+  than silently leaving the prior round's "untried" status unchanged or
+  overstating a result either way.
+- New `toy_model.md`, three new Python scripts, and CSV outputs added to
+  the repo so every number above is independently reproducible.
+
+**Open objections (carried forward):**
+1. The commutation-with-modular-generator threshold for condition (c) was
+   not found — needs a parameter sweep over `g/Γ0`, not yet run.
+2. Condition (b2)'s fix remains untested in any confirmed sense. Next step
+   (if pursued): either reconstruct de la Hamette's "ideal frame" formalism
+   more faithfully (it likely requires the frame to carry a full/faithful
+   representation of the symmetry group, which a bare qubit may not), or
+   find/build a different minimal example that more clearly satisfies her
+   preconditions, before drawing any conclusion about the fix itself.
+3. The toy models' own correctness (the physics, not just the citations)
+   has only been checked by the one person/process that built them. Given
+   this project's standing rule (verify before trusting), the code and its
+   physical setup should get the same adversarial-review treatment the
+   prose claims got in rounds 1–3 before being treated as settled — this is
+   the natural next action, not yet done as of this entry.
+
 **Convergence decision:** round 3 found **no fatal flaw** — i.e., nothing
 that invalidates Claim 1 (still fully established and verified) or Claim 2's
 honest framing as an unvalidated conjecture with named, specific residual

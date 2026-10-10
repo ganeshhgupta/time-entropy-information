@@ -163,20 +163,50 @@ and Rovelli–Smerlak's own result is affine) only when:
      frame used to define the reduced state ρ (and hence R and Θ) is also
      fixed and matches the frame implicit in picking out the worldline in
      (b1) — without this, (b1) alone does not guarantee agreement, per the
-     QRF finding above,
+     QRF finding above. **Round 4 status: a candidate fix was tested and
+     the test was inconclusive, not negative.** A minimal 3-qubit Z2 QRF
+     toy model (`toy_model_qrf_invariant.py`) confirmed the underlying
+     problem directly — a generic physical state gives genuinely different
+     raw reduced-state entropies for the same subsystem depending on which
+     of two candidate systems plays "the frame" — but the proposed fix (de
+     la Hamette's diagonal Rényi invariant, arXiv:2603.23598, fetched and
+     checked directly this round rather than taken on a prior reviewer's
+     paraphrase) could not be confirmed to rescue it in this construction:
+     neither raw nor dephased Rényi entropies matched across frames for a
+     generic state. Most likely explanation: the simple conditional-flip
+     toy construction used here does not satisfy the paper's formal "ideal
+     frame" preconditions, not that the published theorem is wrong. Left
+     open rather than forced to a conclusion either way — see `toy_model.md`
+     §3 for the full reasoning and what would need to change to test this
+     properly.
 (c) the recording/readout apparatus (the non-equilibrium subsystem that
     actually produces nonzero A and a nonzero, legible R per the (a)
-    correction above) couples to the clock's modular Hamiltonian generator in
-    a sense that is **currently unoperationalized** — round-1 (novelty
-    referee) flagged this as prose dressed as precision, and round 3
-    sharpens it further: it is now a condition on *two* quantities (A and R),
-    not one. A candidate fix: require the detector's interaction Hamiltonian
-    to commute with the modular Hamiltonian's generator up to terms vanishing
-    in a stated limit (cf. Unruh–DeWitt detector coupling to a boost-Killing-
-    flow field mode), while remaining weakly coupled enough to stay
-    non-equilibrium itself. This has not been checked against the literature
-    or built into a worked example, and is the one piece of (a)-(c) that is
-    not already published in some form.
+    correction above) must be a **renewable** degree of freedom — a
+    "tape" of fresh ancillas, not a single fixed finite system — coupled to
+    the clock's modular Hamiltonian generator.
+    **Round 4 (2026-10-10): this is no longer pure prose.** A computable toy
+    model (`toy_model.md`, `toy_model_detector_recorder.py`,
+    `toy_model_tape_recorder.py`) confirmed the structural worry in (a)
+    numerically — a *static* recorder's mutual information with the clock,
+    and the joint entropy production, both decay toward zero at late proper
+    time even though the clock reaches its KMS/Gibbs state almost
+    immediately — and then showed that periodically refreshing the recorder
+    (a standard "collision model" / repeated-interaction construction;
+    Ciccarello, Lorenzo, Giovannetti & Palma, Phys. Rep. 954, 1–70 (2022),
+    arXiv:2106.11974) fixes it: after one transient cycle, every subsequent
+    cycle produces an *exactly repeating*, nonzero entropy-production and
+    mutual-information gain, while the clock's fidelity to its Gibbs state
+    stays pinned at 1.0 throughout (i.e. Θ stays well-defined the whole
+    time). **What the toy model could NOT yet confirm:** whether the
+    coupling must specifically commute with the modular generator, as
+    originally proposed — at the (weak-coupling) parameters tested, both a
+    commuting (swap) and a non-commuting (`σ_x⊗σ_x`) coupling worked
+    equally well. The commutation requirement may only bind at stronger
+    coupling, which was not swept. Condition (c) is therefore now: **"the
+    apparatus is a renewable/tape-like resource" (operationalized and
+    numerically confirmed)**, plus **"...and its coupling commutes with the
+    modular generator" (still an open, untested, possibly-unnecessary
+    refinement)**.
 
 **What remains actually novel after round 1:** not the existence of a
 coincidence condition (published, see Bridge C′), but (i) making condition
@@ -220,8 +250,37 @@ candidate next steps, not results.
   critiques (§4); this framework's Bridges A/B/C/C′ do not depend on
   Verlinde's program and are unaffected by its disfavor.
 
+## 7. Computational layer (round 4, new)
+
+As of v2.2, every claim above was literature synthesis and logical argument
+— nothing had been computed. Round 4 built and ran three toy models to test
+Claim 2's conditions directly rather than only argue about them:
+
+```
+toy_model_detector_recorder.py   — base case: static recorder, confirms the
+                                     round-3 A/KMS structural tension really
+                                     happens numerically
+toy_model_tape_recorder.py       — fix: periodically-refreshed recorder,
+                                     operationalizes condition (c)
+toy_model_qrf_invariant.py       — test of a proposed fix for condition
+                                     (b2); result: inconclusive, not negative
+```
+
+Full writeup, honest about what worked and what didn't, in `toy_model.md`.
+Headline results: condition (c) now has a working, numerically-demonstrated
+mechanism (a renewable recorder, grounded in standard collision-model
+physics) though one sub-clause (commutation with the modular generator)
+remains untested at the parameters tried; condition (b2)'s proposed fix
+remains genuinely open, reported as such rather than forced to an answer.
+
 ## 6. Status log
 
+- v3 (2026-10-10): round 4 — first computational round. See §7. Condition
+  (c) operationalized and numerically confirmed (modulo one open sub-clause);
+  condition (b2)'s candidate fix tested and found inconclusive (toy
+  construction likely doesn't satisfy the cited theorem's preconditions, not
+  evidence against the theorem itself). No claims were weakened or
+  invalidated this round; two were sharpened from prose to checkable code.
 - v2.2 (2026-10-10): round-3 holistic whole-document adversarial pass (after
   two narrow-slice rounds + a citation check) found one real structural gap
   missed by every narrow referee: condition (a) as stated made A (entropy
