@@ -197,16 +197,28 @@ and Rovelli–Smerlak's own result is affine) only when:
     cycle produces an *exactly repeating*, nonzero entropy-production and
     mutual-information gain, while the clock's fidelity to its Gibbs state
     stays pinned at 1.0 throughout (i.e. Θ stays well-defined the whole
-    time). **What the toy model could NOT yet confirm:** whether the
-    coupling must specifically commute with the modular generator, as
-    originally proposed — at the (weak-coupling) parameters tested, both a
-    commuting (swap) and a non-commuting (`σ_x⊗σ_x`) coupling worked
-    equally well. The commutation requirement may only bind at stronger
-    coupling, which was not swept. Condition (c) is therefore now: **"the
-    apparatus is a renewable/tape-like resource" (operationalized and
-    numerically confirmed)**, plus **"...and its coupling commutes with the
-    modular generator" (still an open, untested, possibly-unnecessary
-    refinement)**.
+    time). **Round 5 correction and completion:** round 4's first attempt to
+    test the commutation clause used a coupling (`swap`) it incorrectly
+    claimed "commutes with H_D" — an adversarial code audit caught this (it
+    only commutes with `H_D+H_R`, and only at resonance; no exchange
+    coupling can commute with `H_D` alone). Fixed by adding a coupling that
+    genuinely does (`σ_z⊗σ_x`, commutes with `H_D` identically for any
+    parameters) and sweeping coupling strength: the genuinely-commuting
+    coupling keeps the clock's fidelity to its KMS state at exactly 1.0 at
+    every tested strength (up to 4× the bath rate); a genuinely
+    non-commuting coupling (`σ_x⊗σ_x`) degrades it increasingly and
+    persistently as coupling strengthens. **Condition (c)'s commutation
+    clause is now correctly tested and confirmed**, not merely asserted.
+    A third, independent requirement also emerged from the corrected run:
+    the coupling must transfer *recoverable information*, not just
+    energy/entropy — the `swap` coupling (commutes with `H_D+H_R` only) is
+    renewable and thermodynamically active (0.31 nats entropy/cycle) but
+    records *zero* net mutual information per cycle. Condition (c) is
+    therefore: the apparatus must be (i) renewable/tape-like, (ii) coupled
+    in a way that commutes with the clock's own free Hamiltonian (not just
+    the total Hamiltonian), and (iii) coupled in a way that actually
+    transfers recoverable correlation, not only energy — all three now
+    numerically confirmed together in one toy model (`toy_model.md` §2).
 
 **What remains actually novel after round 1:** not the existence of a
 coincidence condition (published, see Bridge C′), but (i) making condition
@@ -275,12 +287,23 @@ remains genuinely open, reported as such rather than forced to an answer.
 
 ## 6. Status log
 
+- v3.1 (2026-10-10): round 5 — adversarial code/physics audit of round 4's
+  toy models (same discipline applied to code that rounds 1–3 applied to
+  prose). Found a regularization artifact (harmless to headline numbers,
+  fixed/caveated) and a genuine physics error (round 4's claimed
+  "commuting" coupling didn't actually commute with the clock's Hamiltonian
+  alone, so condition (c)'s commutation clause was never properly tested).
+  Fixed by adding a genuinely-commuting coupling and a coupling-strength
+  sweep: condition (c) is now correctly tested and confirmed, with a third
+  requirement (informational activity, not just renewability and
+  commutation) discovered in the process of fixing the error. See
+  `toy_model.md` §2 and round 5 of `self_critique.md`.
 - v3 (2026-10-10): round 4 — first computational round. See §7. Condition
-  (c) operationalized and numerically confirmed (modulo one open sub-clause);
-  condition (b2)'s candidate fix tested and found inconclusive (toy
-  construction likely doesn't satisfy the cited theorem's preconditions, not
-  evidence against the theorem itself). No claims were weakened or
-  invalidated this round; two were sharpened from prose to checkable code.
+  (c) operationalized; condition (b2)'s candidate fix tested and found
+  inconclusive (toy construction likely doesn't satisfy the cited theorem's
+  preconditions, not evidence against the theorem itself). No claims were
+  weakened or invalidated this round; two were sharpened from prose to
+  checkable code.
 - v2.2 (2026-10-10): round-3 holistic whole-document adversarial pass (after
   two narrow-slice rounds + a citation check) found one real structural gap
   missed by every narrow referee: condition (a) as stated made A (entropy

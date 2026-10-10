@@ -74,19 +74,22 @@ Round 4 (2026-10-10) did real computation for the first time — see
 `toy_model.md`. Two of the three items below are now partially done with
 numerical results; none are fully closed. In priority order:
 
-### 1. Find the commutation threshold for condition (c) — narrowed, not solved
-Condition (c)'s "renewable recorder / tape" requirement is now numerically
-confirmed (`toy_model_tape_recorder.py`): a periodically-refreshed recorder
-sustains an exactly constant, nonzero entropy production and mutual
-information per cycle indefinitely, while the clock stays pinned at its
-KMS/Gibbs state throughout. What's still open: the original sub-clause
-("coupling commutes with the modular generator") did NOT visibly matter at
-the weak-coupling parameters tested (`g=0.05`, `Γ0=1`) — a commuting (swap)
-and a non-commuting (`σ_x⊗σ_x`) coupling both worked equally well. **Next
-step: sweep `g/Γ0` upward and find where (or if) the non-commuting coupling
-starts visibly disrupting the clock's fidelity to its Gibbs state.** If it
-never does, the commutation clause should be dropped from condition (c)
-entirely, not just left as a caveat.
+### 1. DONE — condition (c) fully operationalized and confirmed (round 5)
+Round 4 attempted to test the commutation clause with a coupling it
+wrongly claimed "commutes with H_D" (it only commutes with H_D+H_R, at
+resonance). A round-5 adversarial code audit caught this; the fix (a
+genuinely-commuting `σ_z⊗σ_x` coupling, verified `[H_D,H_int]=0` by direct
+computation, plus a coupling-strength sweep up to `g=4·Γ0`) confirmed the
+commutation clause for real, and surfaced a third requirement nobody had
+hypothesized: the coupling must also transfer *recoverable information*,
+not just entropy (the `swap` coupling, renewable and thermodynamically
+active, records zero net mutual information per cycle at strong coupling).
+Condition (c) is now: renewable + commutes with the clock's own free
+Hamiltonian + informationally active — all three confirmed together in one
+toy model. See `toy_model.md` §2 and `self_critique.md` round 5. One loose
+thread: *why* the swap coupling specifically records zero net information
+at strong coupling was not explained, just observed — worth understanding
+if this line of work continues.
 
 ### 2. Reconstruct the QRF "ideal frame" formalism more faithfully — the real bottleneck now
 `toy_model_qrf_invariant.py` tested de la Hamette's diagonal-Rényi-invariant

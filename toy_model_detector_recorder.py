@@ -73,6 +73,14 @@ def run_case(label, omega_D, omega_R, T_U, Gamma0, g, coupling, tau_max, n_pts):
         H_int = g * (kron(sigma_plus, sigma_minus) + kron(sigma_minus, sigma_plus))
     elif coupling == 'xx':
         H_int = g * kron(sigma_x, sigma_x)
+    elif coupling == 'zx':
+        # The ONLY one of the three that actually commutes with H_D alone
+        # (verified: [sigma_z(x)I, sigma_z(x)sigma_x] = [sigma_z,sigma_z](x)sigma_x = 0,
+        # for ANY omega_D, omega_R -- not just at resonance like 'swap' vs H_D+H_R).
+        # This is the real test of condition (c)'s "commutes with the modular
+        # generator" clause; round 4's original swap-vs-xx comparison did not
+        # actually test that (round-4 code-audit finding, self_critique.md round 5).
+        H_int = g * kron(sigma_z, sigma_x)
     else:
         raise ValueError(coupling)
 
@@ -136,7 +144,7 @@ if __name__ == '__main__':
     params = dict(omega_D=1.0, omega_R=1.0, T_U=1.0, Gamma0=1.0, g=0.05,
                   tau_max=150.0, n_pts=600)
 
-    for coupling in ['swap', 'xx']:
+    for coupling in ['swap', 'xx', 'zx']:
         rows, n_bar = run_case(coupling, coupling=coupling, **params)
         fname = f'toy_model_results_{coupling}.csv'
         with open(fname, 'w', newline='') as f:

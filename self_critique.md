@@ -460,6 +460,96 @@ literature and logic.
    prose claims got in rounds 1–3 before being treated as settled — this is
    the natural next action, not yet done as of this entry.
 
+## Round 5 (2026-10-10) — adversarial code/physics audit of round 4's toy models
+
+Applied the same discipline used on every prose claim in rounds 1–3 to
+code and numerics for the first time: a fresh adversarial reviewer with no
+visibility into prior reasoning read the three toy-model scripts and
+`toy_model.md`, checked the physics of each formula by hand, and re-ran the
+code independently to reproduce the headline numbers.
+
+**Connections found:**
+- The audit's own fix suggestion ("a genuine test would need a coupling
+  diagonal in D's energy eigenbasis, e.g. `σ_z⊗σ_x`") was immediately
+  checkable and correct: `[H_D, σ_z⊗σ_x] = [σ_z,σ_z]⊗σ_x = 0` identically,
+  for any parameters — a cleaner, parameter-independent commuting coupling
+  than the `swap` coupling round 4 had mistakenly relied on (which only
+  commutes with `H_D+H_R`, and only at resonance). This connects the
+  general algebraic fact "no exchange-type coupling commutes with one
+  party's bare Hamiltonian alone" to a concrete, simple fix.
+- Sweeping coupling strength with the corrected `zx` coupling revealed a
+  third, previously unconsidered requirement for condition (c): the `swap`
+  coupling, re-tested at the higher coupling strength needed to show
+  contrast, turned out to produce substantial entropy but *zero* net
+  mutual-information gain per cycle — connecting "renewable + commuting" to
+  a separate, so-far-unstated "+ actually transfers recoverable
+  information" requirement. This wasn't hypothesized going in; it fell out
+  of re-running the corrected experiment properly.
+
+**Mistakes caught:**
+1. **A physics claim in round 4's own code comments and writeup was simply
+   false**: "swap commutes with `H_D`." It commutes with `H_D+H_R`, and only
+   because `ω_D=ω_R` was chosen. This is a clean example of a mistake
+   different in kind from every prior round's: not a wrong citation, not an
+   overclaimed scope, not a broken cross-condition consistency — a basic,
+   checkable algebraic claim about the code's own Hamiltonians that was
+   simply never checked before being asserted. **Lesson, a fourth distinct
+   failure mode for this project's running list**: round 1 taught "verify
+   citations"; round 3 taught "re-audit the whole claim after a local fix";
+   round 5 teaches "verify your own stated mathematical properties of your
+   own code with a direct computation, not by eyeballing the Hamiltonian
+   and assuming the labels you gave the variables are physically accurate."
+   `comm(H_D, H_swap)` is one line of NumPy — it was never run until an
+   external reviewer asked the right question.
+2. A genuine but harmless numerical artifact (eigenvalue-clipping blowing
+   up `dS/dτ` at an exact pure-state corner) was flagging a real sensitivity
+   in the entropy-derivative formula that should be documented, even though
+   it didn't change any load-bearing conclusion. Caught only because the
+   reviewer actually varied the clip threshold and watched the "entropy
+   production" number at `τ=0` scale with `-ln(clip)` — a good general
+   technique (vary a regularization parameter and check whether a result is
+   stable to it) worth reusing in any future numerical work on this project.
+
+**Corrections applied:**
+- Added a genuinely-commuting coupling (`σ_z⊗σ_x`) to both
+  `toy_model_detector_recorder.py` and `toy_model_tape_recorder.py`.
+- Ran a coupling-strength sweep (`g∈[0.05,4.0]`) and found the actual
+  divergence point between commuting and non-commuting behavior, rather
+  than asserting one exists without checking.
+- Reran the tape-recorder model at `g=2.0` (where the sweep showed clear
+  contrast) for all three couplings, producing the corrected three-way
+  comparison table in `toy_model.md` §2.
+- Corrected the `τ=0` entropy-production artifact's effect on the
+  originally-reported cycle-0 transient numbers, with the actual mechanism
+  (regularization, scaling with `-ln(clip)`) stated explicitly rather than
+  silently patched.
+- Fixed a separate small numeric transcription slip in `toy_model.md` §1
+  (entropy production at `τ=150` was `0.000547`, not the `0.00044`
+  originally written — that value was `I(D:R)`, not entropy production;
+  looks like a copy-paste mix-up between two adjacent columns).
+
+**Open objections (carried forward):**
+1. Condition (b2)'s QRF fix remains untested in any confirmed sense — round
+   5 did not touch this (the audit confirmed the QRF toy model's own code
+   was correct, so the "inconclusive" verdict from round 4 stands on solid
+   ground, just not yet resolved).
+2. The `swap` coupling's "zero net information, nonzero entropy" behavior
+   at strong coupling is itself interesting and not fully explained — is
+   this a general feature of excitation-number-conserving-but-not-`H_D`-
+   commuting couplings, or specific to this toy model's resonance
+   (`ω_D=ω_R`)? Not investigated further this round.
+
+**Meta-lesson added to the standing list (now four, not three):** (1) verify
+citations before trusting them; (2) re-audit the whole claim after any local
+fix, not just the objection that prompted it; (3) [implicit from round 4]
+report a hypothesis as wrong when the numbers say so, and report a test as
+inconclusive rather than forcing an answer when the test's own validity is
+uncertain; (4) **verify your own code's claimed mathematical properties
+with a direct computation before asserting them in prose, even when they
+look obviously true from inspecting the Hamiltonian.** All four are
+different failure modes; none substitutes for the others, and all four
+produced real, fixed errors across this project's five rounds.
+
 **Convergence decision:** round 3 found **no fatal flaw** — i.e., nothing
 that invalidates Claim 1 (still fully established and verified) or Claim 2's
 honest framing as an unvalidated conjecture with named, specific residual

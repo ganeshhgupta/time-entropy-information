@@ -41,11 +41,13 @@ def run_tape(coupling, omega_D, omega_R, T_U, Gamma0, g, reset_period, n_cycles,
     H_D_small = (omega_D / 2.0) * sigma_z
     H_D = kron(H_D_small, I2)
     H_R = kron(I2, (omega_R / 2.0) * sigma_z)
+    sx = np.array([[0, 1], [1, 0]], dtype=complex)
     if coupling == 'swap':
         H_int = g * (kron(sigma_plus, sigma_minus) + kron(sigma_minus, sigma_plus))
     elif coupling == 'xx':
-        H_int = g * kron(np.array([[0, 1], [1, 0]], dtype=complex),
-                          np.array([[0, 1], [1, 0]], dtype=complex))
+        H_int = g * kron(sx, sx)
+    elif coupling == 'zx':
+        H_int = g * kron(sigma_z, sx)  # genuinely commutes with H_D alone, any omega
     else:
         raise ValueError(coupling)
     H = H_D + H_R + H_int
@@ -119,9 +121,12 @@ def run_tape(coupling, omega_D, omega_R, T_U, Gamma0, g, reset_period, n_cycles,
 if __name__ == '__main__':
     import csv
 
-    for coupling in ['swap', 'xx']:
+    for coupling in ['swap', 'xx', 'zx']:
+        # g=2.0 (stronger than round 4's 0.05) deliberately chosen in the
+        # regime where toy_model_detector_recorder.py's sweep showed xx's
+        # fidelity-to-Gibbs visibly degrading (~0.969) while zx stayed exact.
         cycle_log, full_trace, n_bar = run_tape(
-            coupling, omega_D=1.0, omega_R=1.0, T_U=1.0, Gamma0=1.0, g=0.05,
+            coupling, omega_D=1.0, omega_R=1.0, T_U=1.0, Gamma0=1.0, g=2.0,
             reset_period=8.0, n_cycles=25, pts_per_cycle=120)
 
         with open(f'toy_model_tape_cycles_{coupling}.csv', 'w', newline='') as f:
